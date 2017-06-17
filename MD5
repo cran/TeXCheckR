@@ -1,4 +1,4 @@
-f730584bd3c20843bfa5a81d4a135c67 *DESCRIPTION
+e17cb3efd84024c8e20f1aa6996ff558 *DESCRIPTION
 bd443c63f73bd113bf578e2f98095dc7 *NAMESPACE
 59246a7b716e9b22eeabc4b937e0c6d2 *R/CORRECTLY_SPELLED_WORDS_CASE_SENSITIVE.R
 47d1026ee2c0b14da2d0661468cd829d *R/TexCheckR-package.R
@@ -19,7 +19,7 @@ fa7bb00eb20c94c62e027daf45ed28a7 *R/check_literal_xrefs.R
 6073578153aba912e26d294ef796e8c0 *R/check_quote_marks.R
 2398917f66465c1a97254093dcec1c3d *R/check_sentence_ending_periods.R
 0291e473148d62f320366ce54583cba1 *R/check_spacing.R
-b64dd19d3f35e553023f53e608fd9bee *R/check_spelling.R
+8b5bc69d0c2da2ccddbf58d2f0ebdab5 *R/check_spelling.R
 f8eaec92b1d063692065ce775635f766 *R/check_xrefs.R
 9b196cf91f7897abe586296317f61354 *R/combine_lines.R
 0ef954efeb14f5597a95d770863c5909 *R/correctly_spelled_words.R
@@ -27,7 +27,7 @@ f8eaec92b1d063692065ce775635f766 *R/check_xrefs.R
 60b9dbd721d8feba9da24a017352d987 *R/extract_valid_abbreviations.R
 3fe39c198f69af243e0a52aaedba2383 *R/inputs_of.R
 87bd1615bb1bcaa14c17a9685718d755 *R/isR_line_in_knitr.R
-0a84434657cdd1a8e2f558ebd2bb07f1 *R/lint_bib.R
+6a6a38e12c7f29972dfb587040f886d2 *R/lint_bib.R
 2f6ea5637e9f3b38d187f302802166d2 *R/nth_arg_positions.R
 32d3ea254814a7a4448b6cf76571e7cd *R/position_of_closing_brace.R
 0bb173092680342014da71e3d45c8e27 *R/positions_of_strings.R
@@ -65,7 +65,7 @@ a44cea5b15ccff801696a5377180d0c2 *man/check_labels.Rd
 463e01a4400defb547b2da610f3230c1 *man/check_literal_citations.Rd
 fc9691b200f87ba5ef96b6292a158df5 *man/check_literal_xrefs.Rd
 ff61f1aecf3ff0964d5f23120bb6ca51 *man/check_quote_marks.Rd
-7b2228aeeab5f3416aacbdc1e16299bb *man/check_spelling.Rd
+cb466e1e092a68302ba1efe3c7787251 *man/check_spelling.Rd
 644056d50438bfd4b65aeb45abec20a6 *man/check_xrefs.Rd
 672c2ec38209350483215400beedeea3 *man/correctly_spelled_words.Rd
 d95c90ef362bea3774faa400d1407647 *man/extract_validate_abbreviations.Rd
@@ -266,7 +266,7 @@ da041a488c6e478fd5ce4fa68a57dea9 *tests/testthat/test_check_quote.R
 df1de06e0627ad33b039700d5ab8ed60 *tests/testthat/test_check_xrefs.R
 4ad7bd83a2190551668d01a52c38aef4 *tests/testthat/test_cites.R
 1eef43f1371c3c7d42639a244d8aa8df *tests/testthat/test_footnote_typography.R
-938ac7153f9f19f61b0a23b1c6ff2b07 *tests/testthat/test_lint_bib.R
+9c9d62cd48881a14e102b355fb07b87f *tests/testthat/test_lint_bib.R
 c4d01a8846d349260b72519190024d1e *tests/testthat/test_nth_closing_brace.R
 9e12f0c893a013519610652c5682d4ff *tests/testthat/test_replace_LaTeX_argument.R
 f69f361c566e93d774a13b644b9e45f6 *tests/testthat/test_rev_forename.R
