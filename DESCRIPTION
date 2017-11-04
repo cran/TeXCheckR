@@ -1,8 +1,8 @@
 Package: TeXCheckR
 Type: Package
 Title: Parses LaTeX Documents for Errors
-Date: 2017-10-23
-Version: 0.4.1
+Date: 2017-11-03
+Version: 0.4.4
 Author: Hugh Parsonage
 Maintainer: Hugh Parsonage <hugh.parsonage@gmail.com>
 URL: https://github.com/HughParsonage/TeXCheckR
@@ -11,11 +11,12 @@ Description: Checks LaTeX documents and .bib files for typing errors, such as sp
 License: GPL-2
 Depends: R (>= 2.10)
 Imports: magrittr, data.table, stringi, hunspell, hutils (>= 0.8.0),
-        clisymbols, crayon, readr, rstudioapi, stats, zoo, fastmatch
+        clisymbols, crayon, readr, rstudioapi, stats, tools, zoo,
+        fastmatch
 LazyData: TRUE
 RoxygenNote: 6.0.1
 Suggests: testthat, devtools
 NeedsCompilation: no
-Packaged: 2017-10-23 01:34:49 UTC; hughp
+Packaged: 2017-11-04 10:56:52 UTC; hughp
 Repository: CRAN
-Date/Publication: 2017-10-23 03:22:48 UTC
+Date/Publication: 2017-11-04 23:38:00 UTC
