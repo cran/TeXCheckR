@@ -6,8 +6,7 @@
 #' has the entire contents of the argument in \code{extract} column. If \code{TRUE}, 
 #' the contents is split as it is in the document; arguments over multiple lines in the 
 #' document are split over multiple rows in the \code{data.table} returned.
-#' @param parsed_doc A parsed document (from \code{\link{parse_tex}}). 
-#' If not supplied (the default) the contents of \code{tex_lines} are passed through
+#' @param parsed_doc A parsed document (from \code{\link{parse_tex}}).
 #' \code{parse_tex}. Use this argument if the cost of running \code{parse_tex} is 
 #' expensive (such as repeatedly over the same document).
 #' @export
@@ -17,11 +16,12 @@ extract_mandatory_LaTeX_argument <- function(tex_lines,
                                              n = 1L,
                                              by.line = FALSE,
                                              parsed_doc = NULL) {
+
   
   # parse_tex adds these columns
   char <- char_no <- line_no <- NULL
   if (is.null(parsed_doc)) {
-    tex_lines <- strip_comments(tex_lines)
+    tex_lines <- strip_comments(tex_lines, retain.percent.symbol = FALSE)
     parsed_doc <- parse_tex(tex_lines)
   }
   
@@ -30,7 +30,7 @@ extract_mandatory_LaTeX_argument <- function(tex_lines,
   # melt.data.table
   value <- NULL
   
-  if (any(grepl("^OPT", names(parsed_doc)))) {
+  if (any(startsWith(names(parsed_doc), "OPT"))) {
     optional_chars <-
       melt.data.table(parsed_doc,
                       measure.vars = grep("^OPT", names(parsed_doc), value = TRUE),
@@ -44,14 +44,14 @@ extract_mandatory_LaTeX_argument <- function(tex_lines,
       optional_chars %>%
       .[,
         .(text = paste0(char, collapse = ""),
-          init_char_no = first(char_no)),
+          init_char_no = char_no[1L]),
         by = c("variable", "value")] %>%
       .[grepl(sprintf("\\\\%s(?:\\s*(?:\\[|\\{))", command_name), text, perl = TRUE)] %>%
       # Optional groups have [] either side.
       # [ab[c]] -> ab[c] 
       .[, text := stri_sub(text, from = 2L, to = -2L)]
     
-    if (nrow(extracts_within_optional) > 0) {
+    if (nrow(extracts_within_optional)) {
       # # # # # # # # # # # 
       # Recursion:
       #
@@ -65,14 +65,15 @@ extract_mandatory_LaTeX_argument <- function(tex_lines,
                   fill = TRUE)
       #
       # # # # # # # # # # # 
-    } 
+    }
     
-    parsed_doc <- parsed_doc[char_no %notin% optional_char_nos]
+    
+    parsed_doc <- parsed_doc[(!char_no %in% optional_char_nos)]
   }
   
   # Find the location of each command
   nchar_command <- nchar(command_name)
-  command_split <- strsplit(command_name, split = "", fixed = TRUE)[[1]]
+  command_split <- strsplit(command_name, split = "", fixed = TRUE)[[1L]]
   sk <- seq_len(nchar_command)
   
   # Since LaTeX gobbles whitespace following a command, we must 
@@ -120,7 +121,7 @@ extract_mandatory_LaTeX_argument <- function(tex_lines,
   
   command_no <- NULL
   
-  if (nrow(candidates) == 0) {
+  if (nrow(candidates) == 0L) {
     out <- extracts_from_optional
   } else {
     
@@ -155,7 +156,7 @@ extract_mandatory_LaTeX_argument <- function(tex_lines,
       candidates[molten_parsed_doc, on = "char_no"] %>%
       
       # Only include NAs after the first command
-      .[cumsum(!is.na(command)) > 0] %>%
+      .[cumsum(!is.na(command)) > 0L] %>%
       
       .[, .(char_no_min = min(char_no),
             char_no_max = max(char_no),
@@ -172,7 +173,7 @@ extract_mandatory_LaTeX_argument <- function(tex_lines,
         by = "command_no_t"] %>%
       .[(target), .(command_no = command_no_t, char_no_min, char_no_max)]
     
-    if (nrow(candidate_char_ranges) == 0) {
+    if (nrow(candidate_char_ranges) == 0L) {
       # Under this condition, the nth argument of a command
       # has been requested, but is not present 
       out <- extracts_from_optional
@@ -205,7 +206,7 @@ extract_mandatory_LaTeX_argument <- function(tex_lines,
         out[, extract := stri_sub(extract, 2L, -2L)]
       }
       
-      if (nrow(out) > 0) {
+      if (nrow(out)) {
         column <- i.column <- NULL
         column_by_char_no <- parsed_doc[, .SD, .SDcols = c("char_no", "column")]
         out[column_by_char_no, on = "char_no_min==char_no", nomatch=0L] %>%

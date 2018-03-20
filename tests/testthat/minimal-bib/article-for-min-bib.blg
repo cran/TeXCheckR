@@ -1,0 +1,15 @@
+[0] Config.pm:302> INFO - This is Biber 2.10
+[1] Config.pm:305> INFO - Logfile is 'article-for-min-bib.blg'
+[47] biber-MSWIN64:313> INFO - === 
+[70] Biber.pm:371> INFO - Reading 'article-for-min-bib.bcf'
+[168] Biber.pm:857> INFO - Found 3 citekeys in bib section 0
+[189] Biber.pm:3976> INFO - Processing section 0
+[204] Biber.pm:4136> INFO - Looking for bibtex format file '../lint-bib/RefManageR/biblatexExamples-out.bib' for section 0
+[212] bibtex.pm:1490> INFO - LaTeX decoding ...
+[434] bibtex.pm:1306> INFO - Found BibTeX data source '../lint-bib/RefManageR/biblatexExamples-out.bib'
+[492] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[492] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[493] Biber.pm:3804> INFO - Sorting list 'nty/global//global/global' of type 'entry' with template 'nty' and locale 'en-US'
+[493] Biber.pm:3810> INFO - No sort tailoring available for locale 'en-US'
+[496] bbl.pm:617> INFO - Writing 'article-for-min-bib.bbl' with encoding 'UTF-8'
+[498] bbl.pm:720> INFO - Output to article-for-min-bib.bbl

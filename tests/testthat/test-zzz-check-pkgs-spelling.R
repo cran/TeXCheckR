@@ -2,6 +2,7 @@ context("(Package spelling)")
 
 test_that("No misspelled words", {
   skip_on_cran()
+  skip_on_travis()
   # In a checking context, one is typically in /TeXCheckR.Rcheck/tests/testthat/
   if (file.exists("test-zzz-check-pkgs-spelling.R")) {
     if (grepl(".Rcheck", getwd(), fixed = TRUE) && 
@@ -19,14 +20,30 @@ test_that("No misspelled words", {
   result <- 
     tryCatch({
       devtools::spell_check(pkg = pkg,
-                            ignore = c("RStudio", "Rnw", "initialisms",
-                                       "regex", "Unbreaking",
-                                       "linting", "QXEF", "tex",
-                                       "perl", "knitr", "Grattan", 
-                                       "TeX", "ary", "biber", "unescaped"))
+                            ignore = c("ary",
+                                       "backtick",
+                                       "biber",
+                                       "BibLaTeX",
+                                       "Grattan",
+                                       "initialisms",
+                                       "knitr",
+                                       "linting", 
+                                       "perl",
+                                       "QXEF", 
+                                       "regex",
+                                       "Rnw",
+                                       "RStudio",
+                                       "tex",
+                                       "TeX",
+                                       "th", 
+                                       "Unbreaking",
+                                       "unescaped",
+                                       "unreferenced"))
     }, error = function(e) {
-      cat(getwd(),
-          file = "C:/Users/hughp/Documents/sandbox/check-1.txt")
+      if (dir.exists("C:/Users/hughp/Documents/sandbox")) {
+        cat(getwd(),
+            file = "C:/Users/hughp/Documents/sandbox/check-1.txt")
+      }
       # Do not fail the test due to failure to locate the 
       # package:
       cat("NO SPELLCHECK")

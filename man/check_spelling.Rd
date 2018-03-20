@@ -5,8 +5,9 @@
 \title{Spell checking}
 \usage{
 check_spelling(filename, pre_release = TRUE, ignore.lines = NULL,
-  known.correct = NULL, known.wrong = NULL, bib_files, check_etcs = TRUE,
-  dict_lang = "en_GB", rstudio = FALSE, .report_error)
+  known.correct = NULL, known.wrong = NULL, ignore_spelling_in = NULL,
+  bib_files, check_etcs = TRUE, dict_lang = "en_GB", rstudio = FALSE,
+  .report_error)
 }
 \arguments{
 \item{filename}{Path to a LaTeX file to check.}
@@ -21,6 +22,8 @@ present outside the document preamble.}
 
 \item{known.wrong}{Character vector of patterns known to be wrong.}
 
+\item{ignore_spelling_in}{Command whose first mandatory argument will be ignored.}
+
 \item{bib_files}{Bibliography files (containing possible clues to misspellings). If supplied, and this function would otherwise throw an error, the \code{.bib} files are read and any author names that match the misspelled words are added to the dictionary.}
 
 \item{check_etcs}{If \code{TRUE}, stop if any variations of \code{etc}, \code{ie}, and \code{eg} are present. (If they are typed literally, they may be formatted inconsistently. Using a macro ensures they appear consistently.)}
@@ -29,7 +32,7 @@ present outside the document preamble.}
 
 \item{rstudio}{Use the RStudio API?}
 
-\item{.report_error}{A function to provide context to any errors.}
+\item{.report_error}{A function to provide context to any errors. If missing, defaults to \code{\link{report2console}}.}
 }
 \value{
 Called primarily for its side-effect. If the spell check fails, the line at which the first error was detected, with an error message. If the check succeeds, \code{NULL} invisibly.
@@ -38,22 +41,29 @@ Called primarily for its side-effect. If the spell check fails, the line at whic
 Spell checking
 }
 \details{
-Extends and enhances \code{hunspell}. The advantage of this function is that you can add directives 
+Extends and enhances \code{hunspell}:
+
+ \itemize{
+\item{You can add directives 
 in the document itself. To add a word \code{foobaz} to the dictionary (so its presence does not throw an error), write
 \code{\% add_to_dictionary: foobaz} on a single line. The advantage of this method is that you can collaborate
-on the document without having to keep track of which spelling errors are genuine. You can also add the 
+on the document without having to keep track of which spelling errors are genuine.}
+\item{The 
 directive \code{\% ignore_spelling_in: mycmd} which will ignore the spelling of words within the first argument
-of \code{\\mycmd}.
+of \code{\\mycmd}.}
 
-Another possible advantage is that only the root document need be supplied; 
-any files that are fed via \code{\\input} or \code{\\include} are checked (recursively).
+\item{Only the root document need be supplied; 
+any files that are fed via \code{\\input} or \code{\\include} are checked (recursively).}
 
-Other advantages included skipping the contents of certain commands, the spelling of which need not be checked 
-as they are not printed, \code{viz.} citation and cross-reference commands, and certain optional arguments. These
-have been fixed by \code{hunspell} since the first version of this package.
+\item{A historical advantages was that the contents of certain commands were not checked, the spelling of which need not be checked 
+as they are not printed, \code{viz.} citation and cross-reference commands, and certain optional arguments. Most of these
+are now parsed correctly by \code{\link[hunspell]{hunspell}}, though some still need to be supplied (including, naturally, user-supplied macros).}
+\item{Abbreviations and initialisms which are validly introduced will not throw errors. See \code{\link{extract_valid_abbrevations}}.}
+\item{Words preceded by '[sic]' will not throw errors.}
+}
 
 The package comes with a suite of \code{\link{correctly_spelled_words}} that were not present in \code{hunspell}'s 
-dictionary.  
+dictionary. 
 
 This function should be quite fast, but slower than \code{hunspell::hunspell} (which it invokes). 
 I aim for less than 500 ms on a real-world report of around 100 pages.

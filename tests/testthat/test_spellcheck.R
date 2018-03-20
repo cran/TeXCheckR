@@ -1,8 +1,16 @@
 context("Spellchecker")
 
+test_that("Error if not interactive", {
+  skip_if(interactive())
+  expect_error(check_spelling(rstudio = TRUE), regexp = "interactive")
+})
+
 test_that("School funding report checks out", {
   expect_null(check_spelling("./SchoolFunding/SchoolFunding.tex",
-                             known.correct = c("SRS", "SE.XPD.TOTL.GD.XS", "WDI", "SSNP", "underfunded", "overfund[a-z]*", "NMS", "WPI", "DET", "phas", "NP", "SATs", "ENG", "th", "stds", "RCTs", "CAGR"), ignore.lines = 1551))
+                             known.correct = c("SRS", "SE.XPD.TOTL.GD.XS", "WDI", "SSNP", "underfunded",
+                                               "overfund[a-z]*", "NMS", "WPI", "DET", "phas", "NP",
+                                               "SATs", "ENG", "th", "stds", "RCTs", "CAGR"),
+                             ignore.lines = 1551))
 })
 
 test_that("Check spelling of multiple input document", {
@@ -29,7 +37,8 @@ test_that("Initialism checking doesn't fail if at start of sentence", {
 
 test_that("Add to dictionary, ignore spelling in", {
   expect_error(check_spelling("./spelling/add_to_dictionary-wrong.tex"), regexp = "[Ss]pellcheck failed")
-  expect_error(check_spelling("./spelling/ignore_spelling_in-wrong.tex", pre_release = FALSE), regexp = "[Ss]pellcheck failed")
+  expect_error(check_spelling("./spelling/ignore_spelling_in-wrong.tex", pre_release = FALSE),
+               regexp = "[Ss]pellcheck failed")
 
   expect_null(check_spelling("./spelling/add_to_dictionary-ok.tex"))
   expect_null(check_spelling("./spelling/ignore_spelling_in-ok.tex", pre_release = FALSE))
@@ -38,6 +47,12 @@ test_that("Add to dictionary, ignore spelling in", {
   expect_error(check_spelling("./spelling/ignore_spelling_in-ok.tex"), regexp = "pre_release = TRUE")
   
   expect_null(check_spelling("./spelling/add_to_dictionary-ok-req-hunspell.tex", pre_release = FALSE))
+})
+
+test_that("Ignore spelling in input", {
+  expect_error(check_spelling("./spelling/input/a.tex", pre_release = TRUE), 
+               regexp = "Spellcheck failed on above line with .asofihsafioh")
+  expect_null(check_spelling("./spelling/input/a.tex", pre_release = FALSE))
 })
 
 test_that("Stop if present", {
@@ -59,6 +74,7 @@ test_that("Lower-case governments should error", {
 
 test_that("Some lower-case governments should not", {
   expect_null(check_spelling("./spelling/Govt/ok-as-adj.tex"))
+  expect_null(check_spelling("./spelling/Govt/ok-as-adj2.tex"))
 })
 
 test_that("'percent' error should only occur in a Grattan report", {
@@ -85,10 +101,16 @@ test_that("Should error", {
 })
 
 test_that("RStudio API", {
-  skip_if_not(!interactive())
+  skip_on_cran()
+  skip_if_not(interactive())
   expect_error(check_spelling("spelling/typo-suggest.tex", rstudio = TRUE),
                regexp = "Spellcheck")
   expect_false(Sys.info()['sysname'] %in% "Windows" &&
                   utils::readClipboard() != "Sydney")
+})
+
+test_that("Inputs should respect dict_lang at top level", {
+  expect_null(check_spelling("spelling/dict-lang-input/root.tex", 
+                             dict_lang = "en_US"))
 })
 

@@ -4,13 +4,17 @@ OR <- `||`
 
 not_length0 <- function(x) as.logical(length(x))
 
+`%notchin%` <- function(lhs, rhs) {
+  !{lhs %chin% rhs}
+}
+
 lead <- function(x, n = 1L, default = NA) shift(x, type = "lead", n = n, fill = default)
  lag <- function(x, n = 1L, default = NA) shift(x, type = "lag", n = n, fill = default)
 
 fill_blanks <- function(S) {
    # from zoo
    L <- !is.na(S)
-   c(S[L][1L], S[L])[cumsum(L) + 1L]
+   c(S[L][1L], S[L], use.names = FALSE)[cumsum(L) + 1L]
 }
  
 # takes a vector of froms and tos and takes their union
@@ -84,10 +88,6 @@ nth_min.int <- function(x, n){
   sort.int(x)[n]
 }
 
-strip_comments <- function(lines) {
-  sub("(?<!(\\\\))[%].*$", "%", lines, perl = TRUE)
-}
-
 move_to <- function(to.dir, from.dir = ".", pattern = "\\.((pdf)|(tex)|(cls)|(sty)|(Rnw)|(bib)|(png)|(jpg))$"){
   x <- list.files(path = from.dir,
                   pattern = pattern,
@@ -153,6 +153,14 @@ return_first_nonNA <- function(x) {
   }
   out
 }
+
+# testthat
+is_testing <- function() {
+  requireNamespace("testthat", quietly = TRUE) &&
+    utils::packageVersion("testthat") >= package_version("2.0.0") &&
+    testthat::is_testing()
+}
+
 
 
 

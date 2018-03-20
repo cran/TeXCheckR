@@ -1,0 +1,159 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 2.9 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{nty/global//global/global}
+    \entry{almendro}{patent}{}
+      \name{author}{4}{}{%
+        {{hash=9876a36b03f2df9f7951b85f62c485a6}{%
+           family={Almendro},
+           familyi={A\bibinitperiod},
+           given={Jos{é}\bibnamedelima L.},
+           giveni={J\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+        {{hash=7bd3486b1f7e87edeb06748dd21210fd}{%
+           family={Mart{í}n},
+           familyi={M\bibinitperiod},
+           given={Jacinto},
+           giveni={J\bibinitperiod}}}%
+        {{hash=e3e9be95539b0a47fd2ea638d9f9b5b5}{%
+           family={S{á}nchez},
+           familyi={S\bibinitperiod},
+           given={Alberto},
+           giveni={A\bibinitperiod}}}%
+        {{hash=0b3e4f40fa82e058b41b5fe539d12994}{%
+           family={Nozal},
+           familyi={N\bibinitperiod},
+           given={Fernando},
+           giveni={F\bibinitperiod}}}%
+      }
+      \list{location}{3}{%
+        {countryfr}%
+        {countryuk}%
+        {countryde}%
+      }
+      \strng{namehash}{64fdd00d055710b9cb8b7a4c78d0c168}
+      \strng{fullhash}{3f750ffb72d0f0a30664dbabce895f29}
+      \strng{bibnamehash}{64fdd00d055710b9cb8b7a4c78d0c168}
+      \strng{authorbibnamehash}{64fdd00d055710b9cb8b7a4c78d0c168}
+      \strng{authornamehash}{64fdd00d055710b9cb8b7a4c78d0c168}
+      \strng{authorfullhash}{3f750ffb72d0f0a30664dbabce895f29}
+      \field{sortinit}{A}
+      \field{sortinithash}{d77c7cdd82ff690d4c3ef13216f92f0b}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{annotation}{This is a \texttt{patent} entry with a \texttt{location} field. The number is given in the \texttt{number} field. Note the format of the \texttt{location} field in the database file. Compare \texttt{laufenberg}, \texttt{sorace}, and \texttt{kowalik}}
+      \field{langid}{german}
+      \field{number}{EU-29702195U}
+      \field{title}{Elektromagnetisches Signalhorn}
+      \field{year}{1998}
+      \field{dateera}{ce}
+    \endentry
+    \entry{aristotle:poetics}{book}{}
+      \name{author}{1}{}{%
+        {{hash=798a01f212a8e620a6940400717a56d9}{%
+           family={Aristotle},
+           familyi={A\bibinitperiod}}}%
+      }
+      \name{editor}{1}{}{%
+        {{hash=982e446ca0ec26d79f20f1134a0665f5}{%
+           family={Lucas},
+           familyi={L\bibinitperiod},
+           given={D.\bibnamedelimi W.},
+           giveni={D\bibinitperiod\bibinitdelim W\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Oxford}%
+      }
+      \list{publisher}{1}{%
+        {Clarendon Press}%
+      }
+      \strng{namehash}{798a01f212a8e620a6940400717a56d9}
+      \strng{fullhash}{798a01f212a8e620a6940400717a56d9}
+      \strng{bibnamehash}{798a01f212a8e620a6940400717a56d9}
+      \strng{authorbibnamehash}{798a01f212a8e620a6940400717a56d9}
+      \strng{authornamehash}{798a01f212a8e620a6940400717a56d9}
+      \strng{authorfullhash}{798a01f212a8e620a6940400717a56d9}
+      \strng{editorbibnamehash}{982e446ca0ec26d79f20f1134a0665f5}
+      \strng{editornamehash}{982e446ca0ec26d79f20f1134a0665f5}
+      \strng{editorfullhash}{982e446ca0ec26d79f20f1134a0665f5}
+      \field{sortinit}{A}
+      \field{sortinithash}{d77c7cdd82ff690d4c3ef13216f92f0b}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{annotation}{A \texttt{book} entry with an \texttt{author} and an \texttt{editor} as well as a \texttt{series} field}
+      \field{langid}{english}
+      \field{langidopts}{variant=british}
+      \field{series}{Clarendon Aristotle}
+      \field{shorttitle}{Poetics}
+      \field{title}{Poetics}
+      \field{year}{1968}
+      \field{dateera}{ce}
+      \keyw{primary}
+    \endentry
+    \entry{westfahl:space}{incollection}{}
+      \name{author}{1}{}{%
+        {{hash=dd4c0e40628e106b641ac3b9ce2e8b18}{%
+           family={Westfahl},
+           familyi={W\bibinitperiod},
+           given={Gary},
+           giveni={G\bibinitperiod}}}%
+      }
+      \name{editor}{1}{}{%
+        {{hash=dd4c0e40628e106b641ac3b9ce2e8b18}{%
+           family={Westfahl},
+           familyi={W\bibinitperiod},
+           given={Gary},
+           giveni={G\bibinitperiod}}}%
+      }
+      \list{location}{2}{%
+        {Westport, Conn.}%
+        {London}%
+      }
+      \list{publisher}{1}{%
+        {Greenwood}%
+      }
+      \strng{namehash}{dd4c0e40628e106b641ac3b9ce2e8b18}
+      \strng{fullhash}{dd4c0e40628e106b641ac3b9ce2e8b18}
+      \strng{bibnamehash}{dd4c0e40628e106b641ac3b9ce2e8b18}
+      \strng{authorbibnamehash}{dd4c0e40628e106b641ac3b9ce2e8b18}
+      \strng{authornamehash}{dd4c0e40628e106b641ac3b9ce2e8b18}
+      \strng{authorfullhash}{dd4c0e40628e106b641ac3b9ce2e8b18}
+      \strng{editorbibnamehash}{dd4c0e40628e106b641ac3b9ce2e8b18}
+      \strng{editornamehash}{dd4c0e40628e106b641ac3b9ce2e8b18}
+      \strng{editorfullhash}{dd4c0e40628e106b641ac3b9ce2e8b18}
+      \field{sortinit}{W}
+      \field{sortinithash}{ecb89ff85896a47dc313960773ac311d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{annotation}{A cross-referenced article from a \texttt{collection}. This is an \texttt{incollection} entry with a \texttt{crossref} field. Note the \texttt{subtitle} and \texttt{indextitle} fields}
+      \field{booksubtitle}{The Frontier Theme in Science Fiction}
+      \field{booktitle}{Space and Beyond}
+      \field{indextitle}{True Frontier, The}
+      \field{langid}{english}
+      \field{langidopts}{variant=american}
+      \field{subtitle}{Confronting and Avoiding the Realities of Space in American Science Fiction Films}
+      \field{title}{The True Frontier}
+      \field{year}{2000}
+      \field{pages}{55\bibrangedash 65}
+      \range{pages}{11}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
