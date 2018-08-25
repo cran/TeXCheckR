@@ -3,6 +3,8 @@
 #' @param filename A tex or Rnw file.
 #' @param .report_error How errors should be reported.
 #' @param dash.consistency Character vector permitted dash types. 
+#' @param protases_ok (logical, default: \code{TRUE}) Should em-dashes be permitted when 
+#' they form a protasis in a list? \code{\\item when there is an emdash---always.}
 #' @param rstudio (logical, default: \code{TRUE}) Use the RStudio API?
 #' @return File stops and \code{cat()}s on any line where a hyphen is surrounded by a space.
 #' Excludes dashes in knitr chunks and LaTeX math mode \code{\(...\)} but not in TeX math mode \code{$...$}.
@@ -11,6 +13,7 @@
 check_dashes <- function(filename,
                          .report_error,
                          dash.consistency = c("en-dash", "em-dash"),
+                         protases_ok = TRUE,
                          rstudio = TRUE) {
   if (missing(.report_error)) {
     if (rstudio) {
@@ -39,6 +42,11 @@ check_dashes <- function(filename,
     cumsum(endsWith(trimws(lines), "\\]")) > 0L
   
   lines[display_equations] <- "% equation environment"
+  
+  if (protases_ok) {
+    which_protases <- grep("\\\\item (for|if|when|where)\\b", lines, perl = TRUE, ignore.case = TRUE)
+    lines[which_protases] <- "ignored"
+  }
 
   possible_hyphen <- grepl(" - ", lines, fixed = TRUE)
 
@@ -111,29 +119,59 @@ check_dashes <- function(filename,
     stop("Hyphen adjacent to en-dash. (Did you copy this line from Word?) ",
          "Make sure anything you intend as an en-dash is entered as ' -- '")
   }
-
   
-  are_emdash_lines <-
-    lines %>%
-    grep("---", ., fixed = TRUE, value = TRUE) %>%
-    gsub("\\{[^\\s\\}]+\\}", "\\{\\}", x = ., perl = TRUE) %>%
-    grepl("---", ., fixed = TRUE)
-
-
-  if (any(are_emdash_lines) || any(grepl("\u2014", lines, fixed = TRUE))){
-    emdash_lines <-
+  dash.consistency <-
+    match.arg(dash.consistency, several.ok = !missing(dash.consistency))
+  
+  if ("em-dash" %notin% dash.consistency) {
+    are_emdash_lines <-
       lines %>%
+      grep("---", ., fixed = TRUE, value = TRUE) %>%
       gsub("\\{[^\\s\\}]+\\}", "\\{\\}", x = ., perl = TRUE) %>%
-      grep("---", x = ., fixed = TRUE)
-
-    emdash_lines <- union(emdash_lines,
-                          grep("\u2014", lines, fixed = TRUE))
-    line_no <- emdash_lines[[1]]
-    .report_error(line_no = line_no,
-                  context = lines[line_no],
-                  error_message = "Em-dashes not permitted.")
-    stop("Em-dashes not permitted.")
+      grepl("---", ., fixed = TRUE)
+    
+    
+    if (any(are_emdash_lines) || any(grepl("\u2014", lines, fixed = TRUE))){
+      emdash_lines <-
+        lines %>%
+        gsub("\\{[^\\s\\}]+\\}", "\\{\\}", x = ., perl = TRUE) %>%
+        grep("---", x = ., fixed = TRUE)
+      
+      emdash_lines <- union(emdash_lines,
+                            grep("\u2014", lines, fixed = TRUE))
+      line_no <- emdash_lines[[1]]
+      .report_error(line_no = line_no,
+                    context = lines[line_no],
+                    error_message = "Em-dashes not permitted.")
+      stop("Em-dashes not permitted.")
+    }
   }
+  
+  if ("en-dash" %notin% dash.consistency) {
+    are_emdash_lines <-
+      lines %>%
+      grep("(?<!(\\-))--(?!\\-)", ., perl = TRUE, value = TRUE) %>%
+      gsub("\\{[^\\s\\}]+\\}", "\\{\\}", x = ., perl = TRUE) %>%
+      grepl("(?<!(\\-))--(?!\\-)", ., perl = TRUE)
+    
+    
+    if (any(are_emdash_lines) || any(grepl("\u2013", lines, fixed = TRUE))){
+      emdash_lines <-
+        lines %>%
+        gsub("\\{[^\\s\\}]+\\}", "\\{\\}", x = ., perl = TRUE) %>%
+        grep("(?<!(\\-))--(?!\\-)", x = ., perl = TRUE)
+      
+      emdash_lines <- union(emdash_lines,
+                            grep("\u2013", lines, fixed = TRUE))
+      line_no <- emdash_lines[[1]]
+      .report_error(line_no = line_no,
+                    context = lines[line_no],
+                    error_message = "En-dashes not permitted.")
+      stop("En-dashes not permitted.")
+    }
+  }
+  
+  
 
   invisible(NULL)
 }

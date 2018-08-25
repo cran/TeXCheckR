@@ -25,3 +25,23 @@ test_that("Emdashes detected", {
   expect_error(check_dashes("./check-dashes/has-emdash-1.tex"),
                regexp = "[Ee]m-dash")
 })
+
+test_that("emdashes are ok when protasis", {
+  expect_error(check_dashes("./check-dashes/ok-if-protasis.tex", 
+                            protases_ok = FALSE), 
+               regexp = "[Ee]m-dash")
+  expect_null(check_dashes("./check-dashes/ok-if-protasis.tex", 
+                           protases_ok = TRUE))
+})
+
+
+test_that("emdashes are ok when requested", {
+  skip_on_cran()
+  tempf <- tempfile(fileext = ".tex")
+  writeLines(c("A -- B", "C---D", "x-y", "\\(x - y\\)"), tempf)
+  expect_error(check_dashes(tempf), "Em")
+  expect_null(check_dashes(tempf, dash.consistency = c("en-dash", "em-dash")))
+  expect_error(check_dashes(tempf, dash.consistency = c("em-dash")), "En")
+  
+})
+

@@ -29,7 +29,8 @@
 #' 
 
 
-validate_bibliography <- function(path = ".", file = NULL, .report_error, rstudio = FALSE){
+validate_bibliography <- function(path = ".", file = NULL, .report_error,
+                                  rstudio = FALSE) {
   if (missing(.report_error)){
     if (rstudio) {
       .report_error <- function(...) report2console(..., file = file, rstudio = TRUE)
@@ -70,8 +71,7 @@ validate_bibliography <- function(path = ".", file = NULL, .report_error, rstudi
     stop(bib_file, " contains line which is neither a key, nor field, nor closing.")
   }
   
-  bib <- 
-    bib[!grepl("% Valid", bib, fixed = TRUE)]
+  bib[grep("% Valid", bib, fixed = TRUE)] <- ""
   
   if (any(grepl(".[}]$", bib, perl = TRUE))){
     line_no <- grep(".[}]$", bib, perl = TRUE)[[1]]
@@ -83,7 +83,7 @@ validate_bibliography <- function(path = ".", file = NULL, .report_error, rstudi
 
   # Abbreviated names
   inst_pattern <-
-    paste0("^\\s+(author).*",
+    paste0("^\\s*(author).*",
            "(?:",
            "(?:(?:Australian )?Bureau of Statistics)",
            "|",
@@ -198,8 +198,10 @@ validate_bibliography <- function(path = ".", file = NULL, .report_error, rstudi
     journal_actual_vs_journal_expected[journal_actual != journal]
 
   if (nrow(incorrect_journal_entries) > 0){
-    cat(red(symbol$cross), red("Inconsistent treatment of article journal.\n"))
-    print(incorrect_journal_entries)
+    if (getOption("TeXCheckR.messages", TRUE)) {
+      cat(red(symbol$cross), red("Inconsistent treatment of article journal.\n"))
+      print(incorrect_journal_entries)
+    }
     .report_error(error_message = "",
                   context = paste0("In entry", "\n\t",
                                    incorrect_journal_entries[1][["key"]], "\n\n",
@@ -266,8 +268,10 @@ validate_bibliography <- function(path = ".", file = NULL, .report_error, rstudi
       line_nos <- 
         which(and(is_GrattanReport_url & is_TechReport,
                   !grepl("grattan\\.edu\\.au/report/", trimmed_bib, perl = TRUE)))
-      for (x in line_nos)
-        cat(x, ": ", trimmed_bib[[x]], "\n")
+      if (getOption("TeXCheckR.messages", TRUE)) {
+        for (x in line_nos)
+          cat(x, ": ", trimmed_bib[[x]], "\n")
+      }
       stop("URL to Grattan Report does not use https://grattan.edu.au/report/ domain.")
     }
     
@@ -294,12 +298,16 @@ validate_bibliography <- function(path = ".", file = NULL, .report_error, rstudi
   }
 
   # dois should not include the top-level URL
-  if (any(grepl("^\\s+(doi).*https?[:][/][/]", bib, perl = TRUE))){
-    cat(grep("^\\s+(doi).*https?[:][/][/]", bib, perl = TRUE, value = TRUE)[[1]])
-    stop("DOI entries must be in the form", "\n\t",
-         "10.1787/9789264229945-en", "\n",
-         "not", "\n\t",
-         "http://dx.doi.org/10.1787/9789264229945-en")
+  if (any(grepl("^\\s*(doi).*https?[:][/][/]", bib, perl = TRUE))) {
+    line_no <- grep("^\\s*(doi).*https?[:][/][/]", bib, perl = TRUE)[1]
+    report2console(file = file,
+                   line_no = line_no,
+                   error_message = paste0("DOI entries must be in the form", "\n\t",
+                                          "10.1787/9789264229945-en", "\n",
+                                          "not", "\n\t",
+                                          "http://dx.doi.org/10.1787/9789264229945-en"),
+                   context = bib[line_no],
+                   advice = "Either use this as a URL or delete everything except the DOI.")
   }
 
   just_years_and_dates <-
@@ -320,6 +328,17 @@ validate_bibliography <- function(path = ".", file = NULL, .report_error, rstudi
         bad_entry[3], "\n\t",
         bad_entry[4], "\n")
     stop("Date and year should not both appear in bibliography.")
+  }
+  
+  url_hypercorrected <- grep("^url.*\\\\", bib, perl = TRUE)
+  if (not_length0(url_hypercorrected)) {
+    .report_error(file = bib_file,
+                  line_no = url_hypercorrected[1],
+                  column = 1,
+                  context = bib[url_hypercorrected[1]],
+                  error_message = "URL contains hypercorrected escapes.",
+                  advice = paste("Do not escape characters with special meaning in TeX ('control sequences')", 
+                                 "when they appear in URLs. Delete the backslashes."))
   }
 
   invisible(NULL)

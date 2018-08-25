@@ -5,9 +5,10 @@
 \title{Spell checking}
 \usage{
 check_spelling(filename, pre_release = TRUE, ignore.lines = NULL,
-  known.correct = NULL, known.wrong = NULL, ignore_spelling_in = NULL,
-  bib_files, check_etcs = TRUE, dict_lang = "en_GB", rstudio = FALSE,
-  .report_error)
+  known.correct = NULL, known.correct.fixed = NULL,
+  known.wrong = NULL, ignore_spelling_in = NULL,
+  ignore_spelling_in_nth = NULL, bib_files, check_etcs = TRUE,
+  dict_lang = "en_GB", rstudio = FALSE, .report_error)
 }
 \arguments{
 \item{filename}{Path to a LaTeX file to check.}
@@ -20,9 +21,13 @@ present outside the document preamble.}
 
 \item{known.correct}{Character vector of patterns known to be correct (which will never be raised by this function).}
 
+\item{known.correct.fixed}{Character vector of words known to be correct (which will never be raised by this function).}
+
 \item{known.wrong}{Character vector of patterns known to be wrong.}
 
 \item{ignore_spelling_in}{Command whose first mandatory argument will be ignored.}
+
+\item{ignore_spelling_in_nth}{Named list of arguments to ignore; names are the commands to be ignored, values are the \code{n}th argument to be ignored.}
 
 \item{bib_files}{Bibliography files (containing possible clues to misspellings). If supplied, and this function would otherwise throw an error, the \code{.bib} files are read and any author names that match the misspelled words are added to the dictionary.}
 
@@ -51,6 +56,7 @@ on the document without having to keep track of which spelling errors are genuin
 \item{The 
 directive \code{\% ignore_spelling_in: mycmd} which will ignore the spelling of words within the first argument
 of \code{\\mycmd}.}
+\item{\code{ignore_spelling_in_file: <file.tex>} will skip the check of \code{<file.tex>} if it is \code{input} or \code{include} in \code{filename}, as well as any files within it. Should appear as it is within \code{input} but with the file extension}
 
 \item{Only the root document need be supplied; 
 any files that are fed via \code{\\input} or \code{\\include} are checked (recursively).}

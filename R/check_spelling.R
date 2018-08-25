@@ -6,8 +6,10 @@
 #' present outside the document preamble.
 #' @param ignore.lines Integer vector of lines to ignore (due to possibly spurious errors).
 #' @param known.correct Character vector of patterns known to be correct (which will never be raised by this function).
+#' @param known.correct.fixed Character vector of words known to be correct (which will never be raised by this function).
 #' @param known.wrong Character vector of patterns known to be wrong.
 #' @param ignore_spelling_in Command whose first mandatory argument will be ignored.
+#' @param ignore_spelling_in_nth Named list of arguments to ignore; names are the commands to be ignored, values are the \code{n}th argument to be ignored.
 #' @param bib_files Bibliography files (containing possible clues to misspellings). If supplied, and this function would otherwise throw an error, the \code{.bib} files are read and any author names that match the misspelled words are added to the dictionary.
 #' @param check_etcs If \code{TRUE}, stop if any variations of \code{etc}, \code{ie}, and \code{eg} are present. (If they are typed literally, they may be formatted inconsistently. Using a macro ensures they appear consistently.)
 #' @param dict_lang Passed to \code{hunspell::dictionary}.
@@ -25,6 +27,7 @@
 #' \item{The 
 #' directive \code{\% ignore_spelling_in: mycmd} which will ignore the spelling of words within the first argument
 #' of \code{\\mycmd}.}
+#' \item{\code{ignore_spelling_in_file: <file.tex>} will skip the check of \code{<file.tex>} if it is \code{input} or \code{include} in \code{filename}, as well as any files within it. Should appear as it is within \code{input} but with the file extension}
 #' 
 #' \item{Only the root document need be supplied; 
 #' any files that are fed via \code{\\input} or \code{\\include} are checked (recursively).}
@@ -66,8 +69,10 @@ check_spelling <- function(filename,
                            pre_release = TRUE,
                            ignore.lines = NULL,
                            known.correct = NULL,
+                           known.correct.fixed = NULL,
                            known.wrong = NULL,
                            ignore_spelling_in = NULL,
+                           ignore_spelling_in_nth = NULL,
                            bib_files,
                            check_etcs = TRUE,
                            dict_lang = "en_GB",
@@ -91,6 +96,12 @@ check_spelling <- function(filename,
 
   file_path <- dirname(filename)
   orig <- lines <- read_lines(filename)
+  
+  # Quick way to identify end document if it exists, avoids issues 
+  # with comments beneath \end{document}
+  if (any(is_end_doc <- startsWith(lines, "\\end{document}"))) {
+    lines <- lines[seq_len(which.max(is_end_doc))]
+  }
   
   # Omits
   lines <- veto_sic(lines)
@@ -199,9 +210,22 @@ check_spelling <- function(filename,
       stop(paste0("'", wrong, "' present but prohibited in preamble."))
     }
   }
-
+  
+  
   # inputs and includes
   inputs <- inputs_of(filename)
+  
+  files_ignore <- 
+    if (any(startsWith(lines, "% ignore_spelling_in_file:"))) {
+      lines[startsWith(lines, "% ignore_spelling_in_file:")] %>%
+        sub("^[%] ignore_spelling_in_file[:] (.*)([:][0-9]+)?\\s*$", "\\1", x = ., perl = TRUE)
+    }
+
+  if (!is.null(files_ignore)) {
+    inputs %<>% setdiff(files_ignore)
+  }
+  
+    
   
   commands_to_ignore <-
     if (!pre_release) {
@@ -212,11 +236,11 @@ check_spelling <- function(filename,
         unlist(use.names = FALSE)
     }
 
-  if (length(inputs) > 0) {
+  if (length(inputs)) {
     # Recursively check
-    cat("Check subfiles:\n")
+    cat_("Check subfiles:\n")
     for (input in inputs) {
-      cat(input, "\n")
+      cat_(input, "\n")
       check_spelling(filename = file.path(file_path,
                                           paste0(sub("\\.tex?", "", input, perl = TRUE),
                                                  ".tex")),
@@ -229,16 +253,22 @@ check_spelling <- function(filename,
     }
   }
   
-  # Do not check cite keys
+  if (any(grepl("\\verb", lines, fixed = TRUE))) {
+    lines <- gsub("\\\\verb(.)(.+?)\\1", "\\verb", lines)
+  }
+  
+  # Do not check cite keys: not reliably supported by hunspell
   lines <-
     gsub(paste0("((foot)|(text)|(auto))",
                 "cites?",
                 # optional pre/postnote
                 "((",
                 # prenote
-                "\\[", "\\]",
-                # postnote
                 "\\[", "[^\\]]*", "\\]",
+                # postnote
+                "(?:",
+                "\\[", "[^\\]]*", "\\]",
+                ")?",
                 ")?",
                 # cite key (possibly multiple)
                 # (the multiplicity applies to the prenote as well)
@@ -340,6 +370,10 @@ check_spelling <- function(filename,
     stop("pre_release = TRUE but 'ignore spelling in' line was present.")
   }
   
+  # Now we can strip comments as all the directives have been used
+  # and it must occur before any fill_nth_LaTeX_argument arguments
+  lines <- strip_comments(lines)
+  
   parsed_doc <- parse_tex(lines)
   for (command in c(ignore_spelling_in, commands_to_ignore,
                     "captionsetup")) {
@@ -349,12 +383,23 @@ check_spelling <- function(filename,
                                             return.text = FALSE)
     }
   }
-  lines <- unparse(parsed_doc)
-
+  if (!is.null(ignore_spelling_in_nth)) {
+    for (isin in seq_along(ignore_spelling_in_nth)) {
+      command <- names(ignore_spelling_in_nth)[[isin]]
+      if (length(grep(sprintf("\\%s{", command), lines, fixed = TRUE))) {
+        ns <- ignore_spelling_in_nth[[isin]]
+        stopifnot(is.character(command), is.integer(ns))
+        parsed_doc <- fill_nth_LaTeX_argument(parsed_doc, 
+                                              command, 
+                                              n = ns,
+                                              return.text = FALSE)
+      }
+    }
+    
+  }
   
 
-  # Now we can strip comments as all the directives have been used
-  lines <- strip_comments(lines)
+  lines <- unparse(parsed_doc)
 
   # Treat square brackets as invisible:
   # e.g. 'urgently phas[e] out' is correct
@@ -402,7 +447,8 @@ check_spelling <- function(filename,
   
   words_to_add <- c(valid_abbreviations, paste0(valid_abbreviations, "s"), words_to_add)
 
-  parsed <- hunspell(lines, format = "latex", dict = dictionary(dict_lang))
+  parsed <- hunspell(lines, format = "latex", dict = dictionary(dict_lang),
+                     ignore = c(hunspell::en_stats, known.correct.fixed))
   all_bad_words <- unlist(parsed)
 
   # Faster than using hunspell(add_words = )
