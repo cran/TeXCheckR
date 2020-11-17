@@ -1,15 +1,15 @@
-[0] Config.pm:302> INFO - This is Biber 2.11
-[0] Config.pm:305> INFO - Logfile is 'article-for-min-bib.blg'
-[26] biber-MSWIN64:313> INFO - === 
-[49] Biber.pm:371> INFO - Reading 'article-for-min-bib.bcf'
-[129] Biber.pm:857> INFO - Found 3 citekeys in bib section 0
-[142] Biber.pm:3976> INFO - Processing section 0
-[156] Biber.pm:4136> INFO - Looking for bibtex format file '../lint-bib/RefManageR/biblatexExamples-out.bib' for section 0
-[166] bibtex.pm:1500> INFO - LaTeX decoding ...
-[373] bibtex.pm:1316> INFO - Found BibTeX data source '../lint-bib/RefManageR/biblatexExamples-out.bib'
-[415] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
-[415] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[415] Biber.pm:3804> INFO - Sorting list 'nty/global//global/global' of type 'entry' with template 'nty' and locale 'en-US'
-[415] Biber.pm:3810> INFO - No sort tailoring available for locale 'en-US'
-[419] bbl.pm:617> INFO - Writing 'article-for-min-bib.bbl' with encoding 'UTF-8'
-[420] bbl.pm:720> INFO - Output to article-for-min-bib.bbl
+[0] Config.pm:304> INFO - This is Biber 2.12
+[0] Config.pm:307> INFO - Logfile is 'article-for-min-bib.blg'
+[33] biber-MSWIN64:315> INFO - === 
+[68] Biber.pm:371> INFO - Reading 'article-for-min-bib.bcf'
+[181] Biber.pm:889> INFO - Found 3 citekeys in bib section 0
+[197] Biber.pm:4093> INFO - Processing section 0
+[214] Biber.pm:4254> INFO - Looking for bibtex format file '../lint-bib/RefManageR/biblatexExamples-out.bib' for section 0
+[223] bibtex.pm:1523> INFO - LaTeX decoding ...
+[472] bibtex.pm:1340> INFO - Found BibTeX data source '../lint-bib/RefManageR/biblatexExamples-out.bib'
+[522] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[522] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[522] Biber.pm:3921> INFO - Sorting list 'nty/global//global/global' of type 'entry' with template 'nty' and locale 'en-US'
+[522] Biber.pm:3927> INFO - No sort tailoring available for locale 'en-US'
+[526] bbl.pm:636> INFO - Writing 'article-for-min-bib.bbl' with encoding 'UTF-8'
+[527] bbl.pm:739> INFO - Output to article-for-min-bib.bbl

@@ -1,3 +1,36 @@
+## TeXCheckR 0.7.0
+#### Bug fixes:
+* `check_spelling`:
+  - now respects `ignore_spelling_in_nth` in nested inputs.
+  - now correctly identifies nested inputs.
+* Fixed an issue (#73) that was fixed by being more assertive and careful with variables within 
+  some internal functions. Thanks to @wfmackey for reporting.
+* `any_bib_entries` no longer includes an unsound assertion that the number of
+  duplicate entries must be divisible by 2. Thanks to @jamesha95 and AS for reporting.
+
+#### Enhancements
+* `fread_bib`:
+  * offers more flexible error behaviour (such as obeying `getOption("TeXCheckR.halt_on_error")`)
+  * detects and halts (if requested) unescaped `%` signs in fields (#44)
+* The default error profile now uses `simpleError` and refers to the top calling frame.
+* `check_spelling` avoids false positives with possessive apostrophes arising from the recent
+  upstream changes to hunspell.
+
+
+## TeXCheckR 0.6.1
+
+#### Bug fixes:
+
+* `fread_bib`, when it encounters a duplicate entry key,
+  no longer includes lines without keys in the console to
+  explain the error message. 
+* `check_footnote_typography` no longer errors when `footcite` precedes a space and a dash.
+* `rm_editorial_square_brackets` now removes brackets if they are preceded by an opening quote.
+* `extract_validate_abbreviations` now detects abbreviations formed themselves by abbreviations (e.g. NT Electoral Commission (NTEC))
+
+#### Enhancements:
+
+* `check_footnote_typography` now provides better advice as to the location of punctutation after a footcite.
 
 
 ## TeXCheckR 0.6.0

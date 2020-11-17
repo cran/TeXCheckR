@@ -4,7 +4,7 @@
 #' @param .report_error A function to provide context to any errors.
 #' @param rstudio (logical, default: \code{FALSE}) Should the RStudio API be used?
 #' @return Called for its side-effect.
-#' @details See \url{https://github.com/HughParsonage/grattex/blob/master/doc/grattexDocumentation.pdf} for full set of error conditions.
+#' @details See \url{https://github.com/grattan/grattex/blob/master/doc/grattexDocumentation.pdf} for full set of error conditions.
 #' @examples 
 #' \dontrun{
 #'   tex_file <- tempfile(fileext = ".tex")
@@ -19,9 +19,9 @@ check_footnote_typography <- function(filename, ignore.lines = NULL, .report_err
   
   if (missing(.report_error)) {
     if (rstudio) {
-      .report_error <- function(...) report2console(file = filename, ..., rstudio = rstudio)
+      .report_error <- function(...) report2console(file = filename, ..., rstudio = rstudio, halt = TRUE)
     } else {
-      .report_error <- function(...) report2console(file = filename, ...)
+      .report_error <- function(...) report2console(file = filename, ..., halt = TRUE)
     }
   }
   
@@ -201,18 +201,26 @@ check_footnote_typography <- function(filename, ignore.lines = NULL, .report_err
                                       lines_with_footcite_noarg, 
                                       perl = TRUE)
     
-    chars_after_footcite <- gsub("^.*\\\\footcite\\{\\}\\s*(.)?.*$", 
-                                "\\1", 
-                                lines_with_footcite_noarg, 
-                                perl = TRUE)
+    chars_after_footcite <-
+      gsub("^.*\\\\footcite\\{\\}(\\s*.)?.*$", 
+           "\\1", 
+           lines_with_footcite_noarg, 
+           perl = TRUE) %>%
+      .[or(!startsWith(., " "), 
+           !endsWith(., "-"))]
     
-    if (any(chars_after_footcite %fin% punctuation)){
-      first_footcite_w_punct <- which(chars_after_footcite %fin% punctuation)[[1L]]
-      line_no <- line_nos_with_footcite[first_footcite_w_punct]
-      .report_error(line_no = line_nos_with_footcite[first_footcite_w_punct],
-                    context = lines[line_no], 
-                    error_message = "Punctuation mark after footcite number ", first_footcite_w_punct, ".")
-      stop("Punctuation mark after footcite number ", first_footcite_w_punct, ".")
+    if (any(chars_after_footcite %fin% punctuation)) {
+      if (!exists("parsed_doc", inherits = FALSE)) {
+        parsed_doc <- parse_tex(orig_lines)
+      }
+      loc <- first(locate_footcite_punctuation(parsed_doc = parsed_doc))
+      
+      .report_error(line_no = loc[["line_no"]],
+                    column = loc[["column"]],
+                    context = orig_lines[loc[["line_no"]]],
+                    error_message = "Punctuation mark after footcite.",
+                    advice = "Put the punctutation before <\\footcite> or remove it.")
+      stop("Punctuation mark after footcite.")
     }
   }
   
@@ -234,9 +242,16 @@ check_footnote_typography <- function(filename, ignore.lines = NULL, .report_err
     chars_after_footcites <-
       gsub("^.*\\\\footcites?(?:\\{\\})+\\s*(.)?.*$", "\\1", lines_with_footcites_noarg, perl = TRUE)
     
-    if (any(chars_after_footcites %fin%  c(".", ",", ":", ";", "'", '"', "?"))) {
-      stop("Punctuation mark after \\footcites number ",
-           which(chars_after_footcites %in% c(".", ",", ":", ";", "'", '"', "?")[[1]]))
+    punct_except_dash <-  c(".", ",", ":", ";", "'", '"', "?")
+    if (any(chars_after_footcites %fin% punct_except_dash)) {
+      parsed_doc <- parse_tex(orig_lines)
+      loc <- first(locate_footcite_punctuation(parsed_doc = parsed_doc, singular = FALSE))
+      
+      .report_error(line_no = loc[["line_no"]],
+                    column = loc[["column"]],
+                    context = orig_lines[loc[["line_no"]]],
+                    error_message = "Punctuation mark after footcites",
+                    advice = "Put the punctutation before <\\footcites> or remove it.")
     }
   }
   

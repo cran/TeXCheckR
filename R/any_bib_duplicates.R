@@ -87,16 +87,21 @@ any_bib_duplicates <- function(bib.files, .report_error, rstudio = FALSE) {
   }
   
   Author <- Title <- Year <- NULL
-  bibDT %>%
-    .[, Year := if_else(is.na(year),
-                        if_else(is.na(date),
-                                NA_character_,
-                                substr(date, 0L, 4L)), 
-                        as.character(year))] %>%
-    .[, Author := rev_forename_surname_bibtex(author)] %>%
-    .[, Title := tolower(title)] %>%
-    # ABS duplicate if identical without Australia
-    .[Author == "ABS", Title := gsub(", australia,", ",", Title, fixed = TRUE)]
+  if ("year" %notchin% names(bibDT)) {
+    bibDT[, "year" := NA_character_]
+    bibDT[, "Year" := if_else(is.na(date), NA_character_, substr(date, 0L, 4L))]
+  } else {
+    bibDT[, Year := if_else(is.na(year),
+                            if_else(is.na(date),
+                                    NA_character_,
+                                    substr(date, 0L, 4L)), 
+                            as.character(year))]
+  }
+  
+  bibDT[, Author := rev_forename_surname_bibtex(author)]
+  bibDT[, Title := tolower(title)]
+  # ABS duplicate if identical without Australia
+  bibDT[Author == "ABS", Title := gsub(", australia,", ",", Title, fixed = TRUE)]
   
   
   
@@ -108,21 +113,12 @@ any_bib_duplicates <- function(bib.files, .report_error, rstudio = FALSE) {
       .[dups_tail | dups_head, .(key, Author, Title, date, year)] %>%
       .[order(Author, Title)]
     
-    stopifnot(nrow(DT_with_all_duplicates) %% 2L == 0L,
-              nrow(DT_with_all_duplicates) > 1L)
-    
     .report_error(line_no = NULL,
                   context = "Possible duplicates in bibliographies.",
                   error_message = "Possible duplicates in bibliography.")
     
     if (getOption("TeXCheckR.messages", TRUE)) {
-      for (dup in 1:(nrow(DT_with_all_duplicates) / 2)) {
-        if (dup == 6){
-          break
-        }
-        cat("\n")
-        print(DT_with_all_duplicates[c(2 * dup - 1, 2 * dup)], row.names = FALSE)
-      }
+      print(head(DT_with_all_duplicates))
     }
     stop("Possible duplicate entries in bibliography. First 5 shown above.")
   }

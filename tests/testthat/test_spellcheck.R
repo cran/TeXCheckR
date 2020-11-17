@@ -178,4 +178,54 @@ test_that("known.correct.fixed", {
 
 
 
+test_that("get_file_path.works", {
+  # Nested:
+  expect_equal(get_input_file_path(.path = "./nest1",
+                                   .input = "nest1/nest2/file.tex"),
+               "./nest1/nest2/file.tex")
+  # Not nested:
+  expect_equal(get_input_file_path(.path = "./nest1",
+                                   .input = "nest2/file.tex"),
+               "./nest1/nest2/file.tex")
+  # Not nested:
+  expect_equal(get_input_file_path(.path = "./nest1",
+                             .input = "file.tex"),
+               "./nest1/file.tex")
+  
+})
+
+test_that("Nested inputs", {
+  skip_on_cran()
+  temp_dir <- tempfile()
+  hutils::provide.dir(temp_dir)
+  hutils::provide.dir(file.path(temp_dir, "tex"))
+  hutils::provide.dir(file.path(temp_dir, "tex", "bo"))
+  root.tex <- file.path(temp_dir, "root.tex")
+  skip_if_not(file.create(root.tex))
+  writeLines(c("\\documentclass{article}",
+               "\\input{tex/preamble}",
+               "\\begin{document}",
+               "\\input{tex/a}", 
+               "\\input{tex/b}",
+               "\\end{document}"),
+             root.tex)
+  writeLines(c("\\input{tex/b}", 
+               "\\input{tex/bo/ra}",
+               "\\end{document}"),
+             file.path(temp_dir, "tex", "a.tex"))
+  writeLines(c("\\textbf{ok}", 
+               "ok"),
+             file.path(temp_dir, "tex", "b.tex"))
+  writeLines(c("\\textbf{njok}", 
+               "ok"),
+             file.path(temp_dir, "tex", "bo", "ra.tex"))
+  expect_error(check_spelling(root.tex),
+               regexp = "njok")
+  expect_null(check_spelling(root.tex, ignore_spelling_in = "textbf"))
+  expect_null(check_spelling(file.path(temp_dir, "tex", "a.tex"), 
+                             tex_root = temp_dir,
+                             ignore_spelling_in = "textbf"))
+})
+
+
 

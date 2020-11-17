@@ -4,8 +4,12 @@
 \alias{check_footnote_typography}
 \title{Check footnote typography}
 \usage{
-check_footnote_typography(filename, ignore.lines = NULL, .report_error,
-  rstudio = FALSE)
+check_footnote_typography(
+  filename,
+  ignore.lines = NULL,
+  .report_error,
+  rstudio = FALSE
+)
 }
 \arguments{
 \item{filename}{A LaTeX file.}
@@ -23,7 +27,7 @@ Called for its side-effect.
 Check footnote typography
 }
 \details{
-See \url{https://github.com/HughParsonage/grattex/blob/master/doc/grattexDocumentation.pdf} for full set of error conditions.
+See \url{https://github.com/grattan/grattex/blob/master/doc/grattexDocumentation.pdf} for full set of error conditions.
 }
 \examples{
 \dontrun{
